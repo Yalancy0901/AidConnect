@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const navigate = useNavigate();
+  
   return (
     <div className="min-h-screen min-w-screen bg-black text-white">
       <nav className="flex items-center justify-between px-8 md:px-16 py-6">
@@ -42,7 +45,9 @@ function Home() {
             We see you, we hear you, and we empower you.
           </p>
 
-          <button className="mt-6 bg-green-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-green-500 transition">
+          <button
+        onClick={() => navigate("/forms/raisecomplaint")}
+        className="mt-6 bg-green-400 text-black px-6 py-3 rounded-full font-semibold hover:bg-green-500 transition">
             Raise Complaint
           </button>
         </div>

@@ -1,7 +1,21 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/homepage";
+import Layout from "./forms/layout";
+import RaiseComplaint from "./forms/raisecomplaint";
 
 function App() {
-  return <Home />;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+
+        <Route path="/forms" element={<Layout />}>
+          <Route index element={<Navigate to="raisecomplaint" replace />} />
+          <Route path="raisecomplaint" element={<RaiseComplaint />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
