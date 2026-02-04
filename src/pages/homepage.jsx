@@ -6,18 +6,47 @@ function Home() {
   
   return (
     <div className="min-h-screen min-w-screen bg-black text-white">
-      <nav className="flex items-center justify-between px-8 md:px-16 py-6">
-        <h1 className="text-xl font-bold text-green-400">AidConnect</h1>
+    <nav className="flex items-center justify-between px-8 md:px-16 py-6">
+  <h1
+    onClick={() => navigate("/")}
+    className="text-xl font-bold text-green-400 cursor-pointer"
+  >
+    AidConnect
+  </h1>
 
-        <div className="hidden md:flex items-center gap-8 text-sm text-gray-300">
-          <span className="hover:text-green-400 cursor-pointer">Your Complaint</span>
-          <span className="hover:text-green-400 cursor-pointer">Track Complaint</span>
-          <span className="hover:text-green-400 cursor-pointer">Raise Complaint</span>
-          <button className="border border-green-400 px-4 py-2 rounded-full text-green-400 hover:bg-green-400 hover:text-black transition">
-            Sign In
-          </button>
-        </div>
-      </nav>
+  <div className="hidden md:flex items-center gap-8 text-sm text-gray-300">
+    <span
+      onClick={() => navigate("/forms/raisecomplaint")}
+      className="hover:text-green-400 cursor-pointer"
+    >
+      Raise Complaint
+    </span>
+
+    <span
+      onClick={() => navigate("/forms")}
+      className="hover:text-green-400 cursor-pointer"
+    >
+      Track Complaint
+    </span>
+
+    {/* TEMPORARY DASHBOARD BUTTON */}
+    <span
+      onClick={() => navigate("/dashboard")}
+      className="hover:text-green-400 cursor-pointer text-yellow-400"
+      title="Temporary route"
+    >
+      Dashboard
+    </span>
+
+    <button
+      onClick={() => navigate("/auth")}
+      className="border border-green-400 px-4 py-2 rounded-full text-green-400 hover:bg-green-400 hover:text-black transition"
+    >
+      Sign In
+    </button>
+  </div>
+</nav>
+
 
       <section className="px-8 md:px-16 py-20 text-center">
         <h1 className="text-4xl md:text-6xl font-bold leading-tight">
