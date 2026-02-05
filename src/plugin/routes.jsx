@@ -5,6 +5,7 @@ import Overview from "./pages/overview";
 import Tracker from "./pages/tracker";
 import Complaints from "./pages/complaints";
 import Analytics from "./pages/analytics";
+import Companies from "./pages/companies";
 
 export default function PluginRoutes() {
   return (
@@ -21,6 +22,9 @@ export default function PluginRoutes() {
 
         {/* /dashboard/analytics */}
         <Route path="analytics" element={<Analytics />} />
+
+        {/* /dashboard/companies */}
+        <Route path="companies" element={<Companies />} />
 
         {/* fallback */}
         <Route path="*" element={<Navigate to="." replace />} />

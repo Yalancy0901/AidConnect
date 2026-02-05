@@ -31,7 +31,7 @@ function Home() {
 
     {/* TEMPORARY DASHBOARD BUTTON */}
     <span
-      onClick={() => navigate("/dashboard")}
+      onClick={() => navigate("/crm")}
       className="hover:text-green-400 cursor-pointer text-yellow-400"
       title="Temporary route"
     >

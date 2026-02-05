@@ -1,82 +1,146 @@
 import React from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+
+/* ---------- MOCK DATA ---------- */
+
+const stats = [
+  { label: "Total Demand", value: "₹12.4M" },
+  { label: "Total Funded", value: "₹8.1M" },
+  { label: "Funding Gap", value: "₹4.3M" },
+  { label: "Active Partners", value: "18" },
+];
+
+const trendData = [
+  { month: "Jan", demand: 120, supply: 90 },
+  { month: "Feb", demand: 150, supply: 110 },
+  { month: "Mar", demand: 180, supply: 140 },
+  { month: "Apr", demand: 200, supply: 150 },
+  { month: "May", demand: 220, supply: 170 },
+];
+
+const fundingSplit = [
+  { name: "CSR Companies", value: 55 },
+  { name: "NGOs", value: 25 },
+  { name: "Government", value: 20 },
+];
+
+const unmetDemand = [
+  { name: "Water", value: 35 },
+  { name: "Healthcare", value: 30 },
+  { name: "Education", value: 20 },
+  { name: "Infrastructure", value: 15 },
+];
+
+const COLORS = ["#22c55e", "#3b82f6", "#f59e0b", "#ef4444"];
+
+/* ---------- COMPONENT ---------- */
 
 export default function Analytics() {
-  const stats = [
-    { label: "Total Complaints", value: 128 },
-    { label: "Resolved", value: 76 },
-    { label: "In Progress", value: 34 },
-    { label: "Pending", value: 18 }
-  ];
-
-  const demandData = [
-    { category: "Water", count: 42 },
-    { category: "Electricity", count: 31 },
-    { category: "Roads", count: 27 },
-    { category: "Healthcare", count: 18 },
-    { category: "Education", count: 10 }
-  ];
-
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-8">
-        Analytics
-        <span className="text-green-400"> Dashboard</span>
+    <div className="p-6 md:p-10 bg-black min-h-screen text-white space-y-10">
+      {/* HEADER */}
+      <h1 className="text-3xl font-bold text-green-400">
+        Demand vs Supply Dashboard
       </h1>
 
-      {/* Top Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-        {stats.map((item, index) => (
+      {/* STATS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {stats.map((s) => (
           <div
-            key={index}
-            className="bg-zinc-900 p-6 rounded-xl border border-zinc-800"
+            key={s.label}
+            className="bg-zinc-900 rounded-xl p-6 border border-zinc-800"
           >
-            <p className="text-sm text-gray-400">{item.label}</p>
-            <h2 className="text-3xl font-bold mt-2 text-green-400">
-              {item.value}
-            </h2>
+            <p className="text-sm text-gray-400">{s.label}</p>
+            <p className="text-2xl font-bold mt-2 text-green-400">
+              {s.value}
+            </p>
           </div>
         ))}
       </div>
 
-      {/* Demand vs Supply */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Demand */}
-        <div className="bg-zinc-900 p-6 rounded-xl border border-zinc-800">
-          <h2 className="text-xl font-semibold mb-4">
-            Demand by Category
+      {/* CHARTS */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* LINE CHART */}
+        <div className="lg:col-span-2 bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+          <h2 className="font-semibold mb-4">
+            Demand vs Supply Trend
           </h2>
 
-          <div className="space-y-4">
-            {demandData.map((item, index) => (
-              <div key={index}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span>{item.category}</span>
-                  <span>{item.count}</span>
-                </div>
-
-                <div className="w-full bg-black rounded-full h-2">
-                  <div
-                    className="bg-green-400 h-2 rounded-full"
-                    style={{ width: `${item.count * 2}%` }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={trendData}>
+              <XAxis dataKey="month" stroke="#aaa" />
+              <YAxis stroke="#aaa" />
+              <Tooltip />
+              <Line
+                type="monotone"
+                dataKey="demand"
+                stroke="#ef4444"
+                strokeWidth={3}
+              />
+              <Line
+                type="monotone"
+                dataKey="supply"
+                stroke="#22c55e"
+                strokeWidth={3}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
 
-        {/* Insights */}
-        <div className="bg-zinc-900 p-6 rounded-xl border border-zinc-800">
-          <h2 className="text-xl font-semibold mb-4">
-            Key Insights
+        {/* FUNDING SPLIT */}
+        <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+          <h2 className="font-semibold mb-4">
+            Funding Sources
           </h2>
 
-          <ul className="space-y-3 text-sm text-gray-300">
-            <li>• Water-related complaints are the highest in demand</li>
-            <li>• 59% complaints have been resolved successfully</li>
-            <li>• Electricity issues show longer resolution times</li>
-            <li>• Rural infrastructure needs urgent attention</li>
-          </ul>
+          <ResponsiveContainer width="100%" height={260}>
+            <PieChart>
+              <Pie
+                data={fundingSplit}
+                dataKey="value"
+                innerRadius={60}
+                outerRadius={90}
+              >
+                {fundingSplit.map((_, i) => (
+                  <Cell key={i} fill={COLORS[i]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* UNMET DEMAND */}
+        <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
+          <h2 className="font-semibold mb-4">
+            Unmet Demand Areas
+          </h2>
+
+          <ResponsiveContainer width="100%" height={260}>
+            <PieChart>
+              <Pie
+                data={unmetDemand}
+                dataKey="value"
+                innerRadius={60}
+                outerRadius={90}
+              >
+                {unmetDemand.map((_, i) => (
+                  <Cell key={i} fill={COLORS[i]} />
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>
