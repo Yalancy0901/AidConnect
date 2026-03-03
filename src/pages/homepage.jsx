@@ -5,6 +5,13 @@ import prgm from "../images/prgm.jpg";
 
 function Home() {
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    navigate("/");
+    window.location.reload();
+  };
   
   return (
     <div className="min-h-screen min-w-screen bg-black text-white">
@@ -39,20 +46,42 @@ function Home() {
     >
       Dashboard
     </span>
-
-    <button
-      onClick={() => navigate("/auth")}
-      className="border border-green-400 px-4 py-2 rounded-full text-green-400 hover:bg-green-400 hover:text-black transition"
+    <span
+      onClick={() => navigate("/forms")}
+      className="hover:text-green-400 cursor-pointer"
     >
       Donate
-    </button>
+    </span>
 
+    {token ? (
+  <>
+    {/* Profile Image */}
+    <img
+      onClick={() => navigate("/profile")}
+      src="https://i.pravatar.cc/40"
+      alt="profile"
+      className="w-10 h-10 rounded-full cursor-pointer border-2 border-green-400"
+    />
+
+    {/* Logout Button */}
+    <button
+      onClick={handleLogout}
+      className="border border-red-500 px-4 py-2 rounded-full text-red-500 hover:bg-red-500 hover:text-white transition"
+    >
+      Logout
+    </button>
+  </>
+) : (
+  <>
+    
     <button
       onClick={() => navigate("/auth")}
       className="border border-green-400 px-4 py-2 rounded-full text-green-400 hover:bg-green-400 hover:text-black transition"
     >
       Sign In
     </button>
+  </>
+)}
   </div>
 </nav>
 

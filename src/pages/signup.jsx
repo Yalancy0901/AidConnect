@@ -6,10 +6,64 @@ function LoginSignup() {
   const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
 
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: ""
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!isLogin && formData.password !== formData.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    const url = isLogin
+      ? "http://localhost:5000/api/auth/login"
+      : "http://localhost:5000/api/auth/register";
+
+    const payload = isLogin
+      ? {
+          email: formData.email,
+          password: formData.password
+        }
+      : {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
+        };
+
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+      localStorage.setItem("token", data.token);
+      navigate("/");
+      window.location.reload();
+
+      } else {
+        alert(data.message || "Something went wrong");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Server error");
+    }
+  };
+
   return (
     <div className="min-h-screen min-w-screen bg-black flex flex-col">
       <nav className="w-full flex items-center justify-between px-8 py-4 bg-black border-b border-zinc-800">
-
         <h1
           onClick={() => navigate("/")}
           className="text-xl font-bold text-green-400 cursor-pointer"
@@ -50,6 +104,8 @@ function LoginSignup() {
 
       <div className="flex flex-1 items-center justify-center">
         <div className="relative w-[900px] h-[520px] bg-zinc-900 rounded-2xl overflow-hidden shadow-2xl flex">
+
+          {/* Image Panel */}
           <div
             className={`absolute top-0 h-full w-1/2 transition-all duration-700 ease-in-out ${
               isLogin ? "left-1/2" : "left-0"
@@ -62,6 +118,7 @@ function LoginSignup() {
             />
           </div>
 
+          {/* Form Panel */}
           <div
             className={`absolute top-0 h-full w-1/2 bg-zinc-900 flex items-center justify-center transition-all duration-700 ease-in-out ${
               isLogin ? "left-0" : "left-1/2"
@@ -72,32 +129,56 @@ function LoginSignup() {
                 {isLogin ? "Welcome Back" : "Create Account"}
               </h2>
 
-              <form className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
+
                 {!isLogin && (
                   <input
                     type="text"
                     placeholder="Full Name"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                     className="w-full px-4 py-3 rounded-lg bg-black border border-zinc-700 focus:outline-none focus:border-green-400"
+                    required
                   />
                 )}
 
                 <input
                   type="email"
                   placeholder="Email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
                   className="w-full px-4 py-3 rounded-lg bg-black border border-zinc-700 focus:outline-none focus:border-green-400"
+                  required
                 />
 
                 <input
                   type="password"
                   placeholder="Password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData({ ...formData, password: e.target.value })
+                  }
                   className="w-full px-4 py-3 rounded-lg bg-black border border-zinc-700 focus:outline-none focus:border-green-400"
+                  required
                 />
 
                 {!isLogin && (
                   <input
                     type="password"
                     placeholder="Confirm Password"
+                    value={formData.confirmPassword}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        confirmPassword: e.target.value
+                      })
+                    }
                     className="w-full px-4 py-3 rounded-lg bg-black border border-zinc-700 focus:outline-none focus:border-green-400"
+                    required
                   />
                 )}
 

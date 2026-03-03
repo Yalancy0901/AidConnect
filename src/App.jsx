@@ -8,6 +8,7 @@ import Help from "./forms/help";
 import Suggestion from "./forms/suggestion";
 import LoginSignup from "./pages/signup";
 import CRMPlugin from "./plugin";
+import Profile from "./pages/profile";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<LoginSignup />} />
+        <Route path="/profile" element={<Profile />} />
         {/* CRM PLUGIN MOUNT POINT */}
         <Route path="/crm/*" element={<CRMPlugin />} />
 
