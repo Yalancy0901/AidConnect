@@ -37,7 +37,7 @@ export default function Layout() {
     // future: clear auth / token here
     navigate("/");
   }}
-  className="w-full text-left px-4 py-3 rounded-lg text-gray-300 hover:bg-zinc-800 transition"
+  className="w-full text-left px-4 py-3  text-black transition"
 >
   Logout
 </button>
@@ -49,7 +49,6 @@ export default function Layout() {
         </div>
       </aside>
 
-      {/* CONTENT */}
       <main className="flex-1 overflow-y-auto">
         <Outlet />
       </main>

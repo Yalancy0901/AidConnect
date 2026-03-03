@@ -1,20 +1,48 @@
 import React from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import {
+  FaPlusCircle,
+  FaSearch,
+  FaFileAlt,
+  FaQuestionCircle,
+  FaLightbulb,
+} from "react-icons/fa";
 
 function Layout() {
   const navigate = useNavigate();
 
   const items = [
-    { label: "Raise complaint", path: "/forms/raisecomplaint", icon: "/icons/raise.png" },
-    { label: "Track complaint", icon: "/icons/track.png" },
-    { label: "Your complaint", icon: "/icons/file.png" },
-    { label: "Help", icon: "/icons/help.png" },
-    { label: "Suggestion", icon: "/icons/idea.png" },
+    {
+      label: "Raise Complaint",
+      path: "/forms/raisecomplaint",
+      icon: <FaPlusCircle size={28} />,
+    },
+    {
+      label: "Track Complaint",
+      path: "/forms/track",
+      icon: <FaSearch size={28} />,
+    },
+    {
+      label: "Your Complaint",
+      path: "/forms/yourcomplaint",
+      icon: <FaFileAlt size={28} />,
+    },
+    {
+      label: "Help",
+      path: "/forms/help",
+      icon: <FaQuestionCircle size={28} />,
+    },
+    {
+      label: "Suggestion",
+      path: "/forms/suggestion",
+      icon: <FaLightbulb size={28} />,
+    },
   ];
 
   return (
     <div className="min-h-screen min-w-screen bg-black text-white">
-      <nav className="px-8 py-6">
+      {/* Header */}
+      <nav className="px-8 py-6 border-b border-zinc-800">
         <h1
           onClick={() => navigate("/")}
           className="text-xl font-bold text-green-400 cursor-pointer"
@@ -24,25 +52,29 @@ function Layout() {
       </nav>
 
       <div className="flex">
+        {/* Left Side Icons */}
         <div className="w-1/2 flex items-center justify-center">
-          <div className="grid grid-cols-3 gap-16">
+          <div className="grid grid-cols-3 gap-12">
             {items.map((item, index) => (
               <div
                 key={index}
-                onClick={() => item.path && navigate(item.path)}
-                className="flex flex-col items-center gap-3 cursor-pointer"
+                onClick={() => navigate(item.path)}
+                className="flex flex-col items-center gap-3 cursor-pointer group"
               >
-                <div className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center">
-                  <img src={item.icon} alt={item.label} className="w-12 h-12" />
+                <div className="w-20 h-20 rounded-full bg-zinc-800 flex items-center justify-center text-green-400 group-hover:bg-green-400 group-hover:text-black transition duration-300">
+                  {item.icon}
                 </div>
-                <p className="text-sm">{item.label}</p>
+                <p className="text-sm text-gray-300 group-hover:text-green-400 transition">
+                  {item.label}
+                </p>
               </div>
             ))}
           </div>
         </div>
 
+        {/* Right Side Dynamic Form */}
         <div className="w-1/2 flex items-center justify-center px-12">
-          <div className="bg-green-400 w-160 rounded-2xl p-8 shadow-xl text-black">
+          <div className="w-full max-w-xl">
             <Outlet />
           </div>
         </div>

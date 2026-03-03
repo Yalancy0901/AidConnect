@@ -2,41 +2,80 @@ import React from "react";
 
 const complaints = [
   {
-    id: "CMP-001",
-    title: "Water supply issue",
-    category: "Water",
-    status: "Pending",
-    date: "2026-01-28",
+    id: "CMP-101",
+    title: "Water is not available in our Area",
+    village: "Kasipatti",
+    status: "Unassigned",
+    date: "2026-02-21",
   },
   {
-    id: "CMP-002",
-    title: "Streetlight not working",
-    category: "Electricity",
+    id: "CMP-102",
+    title: "No proper hospital supplies in the clinic",
+    village: "Jolarpet",
+    status: "Unassigned",
+    date: "2026-02-25",
+  },
+  {
+    id: "CMP-103",
+    title: "No proper road to main city",
+    village: "Lokkipet",
+    status: "To Do",
+    date: "2026-02-27",
+  },
+  {
+    id: "CMP-104",
+    title: "Broken toilet and less number of working toilets",
+    village: "Komapatti",
     status: "In Progress",
-    date: "2026-01-27",
+    date: "2026-03-06",
   },
   {
-    id: "CMP-003",
-    title: "Garbage not collected",
-    category: "Sanitation",
+    id: "CMP-105",
+    title: "Need of proper education",
+    village: "Misouri",
+    status: "In Progress",
+    date: "2026-02-18",
+  },
+  {
+    id: "CMP-106",
+    title: "No availability of seed crops in the market",
+    village: "Kolhapur",
+    status: "Blocked",
+    date: "2026-02-21",
+  },
+  {
+    id: "CMP-107",
+    title: "School roof broken",
+    village: "Ammapettai",
     status: "Resolved",
-    date: "2026-01-25",
+    date: "2026-03-06",
   },
 ];
 
 function getStatusColor(status) {
-  if (status === "Resolved") return "text-green-400";
-  if (status === "In Progress") return "text-yellow-400";
-  return "text-red-400";
+  switch (status) {
+    case "Resolved":
+      return "text-green-400";
+    case "In Progress":
+      return "text-yellow-400";
+    case "Blocked":
+      return "text-orange-400";
+    case "To Do":
+      return "text-blue-400";
+    case "Unassigned":
+      return "text-red-400";
+    default:
+      return "text-gray-400";
+  }
 }
 
 export default function Complaints() {
   return (
     <div className="p-6 md:p-10 text-white">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold">Complaints</h1>
+        <h1 className="text-3xl font-bold">All Complaints</h1>
         <p className="text-gray-400 mt-2">
-          Manage, track, and resolve incoming complaints.
+          View and manage complaints across all stages.
         </p>
       </div>
 
@@ -46,7 +85,7 @@ export default function Complaints() {
             <tr>
               <th className="px-6 py-4 text-left">Complaint ID</th>
               <th className="px-6 py-4 text-left">Title</th>
-              <th className="px-6 py-4 text-left">Category</th>
+              <th className="px-6 py-4 text-left">Village</th>
               <th className="px-6 py-4 text-left">Status</th>
               <th className="px-6 py-4 text-left">Date</th>
             </tr>
@@ -60,8 +99,12 @@ export default function Complaints() {
               >
                 <td className="px-6 py-4 font-medium">{item.id}</td>
                 <td className="px-6 py-4">{item.title}</td>
-                <td className="px-6 py-4">{item.category}</td>
-                <td className={`px-6 py-4 font-semibold ${getStatusColor(item.status)}`}>
+                <td className="px-6 py-4">{item.village}</td>
+                <td
+                  className={`px-6 py-4 font-semibold ${getStatusColor(
+                    item.status
+                  )}`}
+                >
                   {item.status}
                 </td>
                 <td className="px-6 py-4 text-gray-400">{item.date}</td>

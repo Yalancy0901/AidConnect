@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import crm1 from "../images/crm1.jpg";
+import prgm from "../images/prgm.jpg";
 
 function Home() {
   const navigate = useNavigate();
@@ -42,26 +44,54 @@ function Home() {
       onClick={() => navigate("/auth")}
       className="border border-green-400 px-4 py-2 rounded-full text-green-400 hover:bg-green-400 hover:text-black transition"
     >
+      Donate
+    </button>
+
+    <button
+      onClick={() => navigate("/auth")}
+      className="border border-green-400 px-4 py-2 rounded-full text-green-400 hover:bg-green-400 hover:text-black transition"
+    >
       Sign In
     </button>
   </div>
 </nav>
 
 
-      <section className="px-8 md:px-16 py-20 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-          Connecting Communities. <br />
-          <span className="text-green-400">Empowering Voices.</span>
-        </h1>
+      <section className="relative h-screen w-full overflow-hidden">
+  {/* YouTube Background */}
+  <iframe
+    className="absolute top-0 left-0 w-full h-full scale-125 pointer-events-none"
+    src="https://www.youtube.com/embed/Sqqj_14wBxU?autoplay=1&mute=1&loop=1&playlist=Sqqj_14wBxU&controls=0&showinfo=0&rel=0&modestbranding=1"
+    title="AidConnect Background"
+    frameBorder="0"
+    allow="autoplay; fullscreen"
+  />
 
-        <p className="mt-6 text-gray-400 max-w-2xl mx-auto">
-          A unified platform that ensures every complaint is heard and addressed transparently.
-        </p>
+  {/* Overlay */}
+  <div className="absolute inset-0 bg-black/60 z-10" />
 
-        <button className="mt-8 bg-green-400 text-black px-8 py-3 rounded-full font-semibold hover:bg-green-500 transition">
-          Get Started
-        </button>
-      </section>
+  {/* Content */}
+  <div className="relative z-20 h-full flex items-center justify-center px-8 md:px-16 text-center">
+    <div>
+      <h1 className="text-4xl md:text-6xl font-bold leading-tight">
+        Connecting Communities. <br />
+        <span className="text-green-400">Empowering Voices.</span>
+      </h1>
+
+      <p className="mt-6 text-gray-300 max-w-2xl mx-auto">
+        A unified platform that ensures every complaint is heard and addressed transparently.
+      </p>
+
+      <button
+        onClick={() => navigate("/forms/raisecomplaint")}
+        className="mt-8 bg-green-400 text-black px-8 py-3 rounded-full font-semibold hover:bg-green-500 transition"
+      >
+        Get Started
+      </button>
+    </div>
+  </div>
+</section>
+
 
       <section className="px-8 md:px-16 py-20 flex flex-col md:flex-row items-center gap-12">
         <div className="md:w-1/2">
@@ -82,35 +112,102 @@ function Home() {
         </div>
 
         <div className="md:w-1/2">
-          <img src="/hero-illustration.png" alt="Community support" className="w-full" />
+          <img src={crm1} alt="Community support" className="w-full" />
         </div>
       </section>
 
-      <section className="px-8 md:px-16 py-20 grid md:grid-cols-3 gap-8">
-        {["Transparent Tracking", "Community Driven", "Fast Resolution"].map(
-          (feature, index) => (
-            <div
-              key={index}
-              className="bg-zinc-900 p-6 rounded-2xl hover:border hover:border-green-400 transition"
-            >
-              <h3 className="text-xl font-semibold text-green-400">{feature}</h3>
-              <p className="mt-3 text-gray-400 text-sm">
-                Empowering users with clarity, accountability, and trust.
-              </p>
-            </div>
-          )
-        )}
-      </section>
+      {/* OUR IMPACT */}
+<section className="bg-zinc-300 text-black px-8 md:px-16 py-24">
+  <h2 className="text-center text-3xl md:text-4xl font-bold mb-16">
+    OUR IMPACT
+  </h2>
 
-      <section className="px-8 md:px-16 py-20 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold">
-          Ready to make your voice heard?
-        </h2>
+  <div className="grid grid-cols-1 md:grid-cols-4 gap-12 text-center">
+    <div>
+      <h3 className="text-6xl font-extrabold text-green-500">20+</h3>
+      <p className="mt-4 font-semibold text-green-600 uppercase">Lac</p>
+      <p className="mt-2 text-sm text-gray-700">
+        children and their families are impacted every year
+      </p>
+    </div>
 
-        <button className="mt-6 bg-green-400 text-black px-10 py-3 rounded-full font-semibold hover:bg-green-500 transition">
-          Raise a Complaint
-        </button>
-      </section>
+    <div>
+      <h3 className="text-6xl font-extrabold text-green-500">2000+</h3>
+      <p className="mt-4 font-semibold text-green-600 uppercase">Villages</p>
+      <p className="mt-2 text-sm text-gray-700">
+        and slums are reached across the country
+      </p>
+    </div>
+
+    <div>
+      <h3 className="text-6xl font-extrabold text-green-500">400+</h3>
+      <p className="mt-4 font-semibold text-green-600 uppercase">Projects</p>
+      <p className="mt-2 text-sm text-gray-700">
+        focused on education, healthcare and women empowerment
+      </p>
+    </div>
+
+    <div>
+      <h3 className="text-6xl font-extrabold text-green-500">27+</h3>
+      <p className="mt-4 font-semibold text-green-600 uppercase">States</p>
+      <p className="mt-2 text-sm text-gray-700">
+        are reached including the remotest areas
+      </p>
+    </div>
+  </div>
+</section>
+
+
+      {/* OUR PROGRAMMES */}
+<section className="bg- black px-8 md:px-16 py-24">
+  <h2 className="text-center text-white text-3xl md:text-4xl font-bold mb-16">
+    OUR PROGRAMMES
+  </h2>
+
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-white ">
+    {[
+      {
+        title: "Education",
+        desc: "Education nutrition and holistic development of children",
+      },
+      {
+        title: "Healthcare",
+        desc: "Taking healthcare services to doorsteps of hard to reach communities",
+      },
+      {
+        title: "Women Empowerment",
+        desc: "Empowering adolescent girls & women through community engagement",
+      },
+      {
+        title: "Livelihood",
+        desc: "Skill training and placement support for underprivileged youth",
+      },
+      {
+        title: "Empowering Grassroots",
+        desc: "Helping community-based organizations become locally sustainable",
+      },
+      {
+        title: "Disaster Response",
+        desc: "Reach out and respond to the needs of disaster-affected people",
+      },
+    ].map((item, index) => (
+      <div
+        key={index}
+        className="flex items-start gap-4 p-6 rounded-xl hover:shadow-md transition border border-white"
+      >
+        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-600 font-bold">
+          ✓
+        </div>
+
+        <div>
+          <h3 className="font-semibold text-lg">{item.title}</h3>
+          <p className="mt-2 text-sm text-gray-600">{item.desc}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
 
       <footer className="px-8 md:px-16 py-10 text-center text-gray-500 text-sm border-t border-zinc-800">
         © 2026 AidConnect. All rights reserved.
