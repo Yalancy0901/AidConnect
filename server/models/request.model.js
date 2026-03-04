@@ -1,13 +1,28 @@
 const mongoose = require("mongoose");
 
-const requestSchema = new mongoose.Schema({
-  title: String,
-  description: String,
-  amountNeeded: Number,
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User"
-  }
-}, { timestamps: true });
+const complaintSchema = new mongoose.Schema(
+  {
+    trackingId: {
+      type: String,
+      unique: true,
+    },
+    fullName: String,
+    email: String,
+    mobile: String,
+    category: String,
+    location: String,
+    description: String,
+    image: String,
+    status: {
+      type: String,
+      default: "Unassigned",
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
+  { timestamps: true }
+);
 
-module.exports = mongoose.model("Request", requestSchema);
+module.exports = mongoose.model("Complaint", complaintSchema);

@@ -84,8 +84,6 @@ function Home() {
 )}
   </div>
 </nav>
-
-
       <section className="relative h-screen w-full overflow-hidden">
   {/* YouTube Background */}
   <iframe

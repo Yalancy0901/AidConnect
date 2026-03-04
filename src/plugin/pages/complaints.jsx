@@ -1,118 +1,105 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-const complaints = [
-  {
-    id: "CMP-101",
-    title: "Water is not available in our Area",
-    village: "Kasipatti",
-    status: "Unassigned",
-    date: "2026-02-21",
-  },
-  {
-    id: "CMP-102",
-    title: "No proper hospital supplies in the clinic",
-    village: "Jolarpet",
-    status: "Unassigned",
-    date: "2026-02-25",
-  },
-  {
-    id: "CMP-103",
-    title: "No proper road to main city",
-    village: "Lokkipet",
-    status: "To Do",
-    date: "2026-02-27",
-  },
-  {
-    id: "CMP-104",
-    title: "Broken toilet and less number of working toilets",
-    village: "Komapatti",
-    status: "In Progress",
-    date: "2026-03-06",
-  },
-  {
-    id: "CMP-105",
-    title: "Need of proper education",
-    village: "Misouri",
-    status: "In Progress",
-    date: "2026-02-18",
-  },
-  {
-    id: "CMP-106",
-    title: "No availability of seed crops in the market",
-    village: "Kolhapur",
-    status: "Blocked",
-    date: "2026-02-21",
-  },
-  {
-    id: "CMP-107",
-    title: "School roof broken",
-    village: "Ammapettai",
-    status: "Resolved",
-    date: "2026-03-06",
-  },
-];
+function Complaints() {
+  const [complaints, setComplaints] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-function getStatusColor(status) {
-  switch (status) {
-    case "Resolved":
-      return "text-green-400";
-    case "In Progress":
-      return "text-yellow-400";
-    case "Blocked":
-      return "text-orange-400";
-    case "To Do":
-      return "text-blue-400";
-    case "Unassigned":
-      return "text-red-400";
-    default:
-      return "text-gray-400";
-  }
-}
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:5000/api/requests"
+        );
+        setComplaints(res.data);
+      } catch (error) {
+        console.error("Error fetching complaints:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-export default function Complaints() {
+    fetchComplaints();
+  }, []);
+
   return (
-    <div className="p-6 md:p-10 text-white">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">All Complaints</h1>
-        <p className="text-gray-400 mt-2">
-          View and manage complaints across all stages.
-        </p>
-      </div>
+    <div className="p-8 text-white bg-black min-h-screen">
+      <h1 className="text-2xl font-semibold mb-6 border-b border-green-400 pb-2">
+        All Complaints
+      </h1>
 
-      <div className="overflow-x-auto bg-zinc-900 rounded-2xl border border-zinc-800">
-        <table className="w-full text-sm">
-          <thead className="bg-zinc-800 text-gray-300">
-            <tr>
-              <th className="px-6 py-4 text-left">Complaint ID</th>
-              <th className="px-6 py-4 text-left">Title</th>
-              <th className="px-6 py-4 text-left">Village</th>
-              <th className="px-6 py-4 text-left">Status</th>
-              <th className="px-6 py-4 text-left">Date</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {complaints.map((item) => (
-              <tr
-                key={item.id}
-                className="border-t border-zinc-800 hover:bg-zinc-800 transition"
-              >
-                <td className="px-6 py-4 font-medium">{item.id}</td>
-                <td className="px-6 py-4">{item.title}</td>
-                <td className="px-6 py-4">{item.village}</td>
-                <td
-                  className={`px-6 py-4 font-semibold ${getStatusColor(
-                    item.status
-                  )}`}
-                >
-                  {item.status}
-                </td>
-                <td className="px-6 py-4 text-gray-400">{item.date}</td>
+      {loading ? (
+        <p className="text-green-400">Loading complaints...</p>
+      ) : complaints.length === 0 ? (
+        <p className="text-zinc-400">No complaints found.</p>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full border border-zinc-700">
+            <thead>
+              <tr className="bg-zinc-900 text-green-400">
+                <th className="p-3 border border-zinc-700 text-left">
+                  Tracking ID
+                </th>
+                <th className="p-3 border border-zinc-700 text-left">
+                  Description
+                </th>
+                <th className="p-3 border border-zinc-700 text-left">
+                  Location
+                </th>
+                <th className="p-3 border border-zinc-700 text-left">
+                  Status
+                </th>
+                <th className="p-3 border border-zinc-700 text-left">
+                  Date
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+
+            <tbody>
+              {complaints.map((item) => (
+                <tr
+                  key={item._id}
+                  className="hover:bg-zinc-800 transition"
+                >
+                  <td className="p-3 border border-zinc-700">
+                    {item.trackingId}
+                  </td>
+
+                  <td className="p-3 border border-zinc-700">
+                    {item.description}
+                  </td>
+
+                  <td className="p-3 border border-zinc-700">
+                    {item.location}
+                  </td>
+
+                  <td className="p-3 border border-zinc-700">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm ${
+                        item.status === "Unassigned"
+                          ? "bg-yellow-400 text-black"
+                          : item.status === "In Progress"
+                          ? "bg-blue-400 text-black"
+                          : item.status === "Resolved"
+                          ? "bg-green-400 text-black"
+                          : "bg-red-400 text-black"
+                      }`}
+                    >
+                      {item.status}
+                    </span>
+                  </td>
+
+                  <td className="p-3 border border-zinc-700">
+                    {new Date(item.createdAt).toLocaleDateString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
+
+export default Complaints;

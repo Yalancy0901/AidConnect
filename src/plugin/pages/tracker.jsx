@@ -118,6 +118,29 @@ function IssueForm({ initialData, onClose, onSave }) {
 
 export default function Tracker() {
   const [board, setBoard] = useState(columns);
+
+useEffect(() => {
+  const fetchComplaints = async () => {
+    const res = await axios.get("http://localhost:5000/api/requests");
+
+    const complaints = res.data;
+
+    const updatedBoard = { ...columns };
+
+    complaints.forEach((c) => {
+      updatedBoard[c.status].items.push({
+        id: c._id,
+        title: c.description,
+        village: c.location,
+        deadline: new Date(c.createdAt).toISOString().split("T")[0],
+      });
+    });
+
+    setBoard(updatedBoard);
+  };
+
+  fetchComplaints();
+}, []);
   const [showForm, setShowForm] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [viewItem, setViewItem] = useState(null);
