@@ -236,9 +236,80 @@ function Home() {
 </section>
 
 
-      <footer className="px-8 md:px-16 py-10 text-center text-gray-500 text-sm border-t border-zinc-800">
-        © 2026 AidConnect. All rights reserved.
-      </footer>
+      <footer className="px-8 md:px-16 py-16 bg-zinc-900 text-gray-400 border-t border-zinc-800">
+
+  <div className="grid grid-cols-1 md:grid-cols-4 gap-12 text-sm">
+
+    {/* PLATFORM */}
+    <div>
+      <h3 className="text-white font-semibold mb-5 tracking-wide">
+        PLATFORM
+      </h3>
+
+      <ul className="space-y-3">
+        <li className="hover:text-green-400 cursor-pointer">Raise Complaint</li>
+        <li className="hover:text-green-400 cursor-pointer">Track Complaint</li>
+        <li className="hover:text-green-400 cursor-pointer">Your Complaints</li>
+        <li className="hover:text-green-400 cursor-pointer">Submit Suggestion</li>
+      </ul>
+    </div>
+
+    {/* SUPPORT */}
+    <div>
+      <h3 className="text-white font-semibold mb-5 tracking-wide">
+        SUPPORT
+      </h3>
+
+      <ul className="space-y-3">
+        <li className="hover:text-green-400 cursor-pointer">Help Center</li>
+        <li className="hover:text-green-400 cursor-pointer">FAQs</li>
+        <li className="hover:text-green-400 cursor-pointer">Report Issue</li>
+        <li className="hover:text-green-400 cursor-pointer">User Guide</li>
+      </ul>
+    </div>
+
+    {/* ORGANIZATIONS */}
+    <div>
+      <h3 className="text-white font-semibold mb-5 tracking-wide">
+        ORGANIZATIONS
+      </h3>
+
+      <ul className="space-y-3">
+        <li className="hover:text-green-400 cursor-pointer">Partner NGOs</li>
+        <li className="hover:text-green-400 cursor-pointer">Corporate Sponsors</li>
+        <li className="hover:text-green-400 cursor-pointer">Become a Partner</li>
+      </ul>
+    </div>
+
+    {/* CONTACT */}
+    <div>
+      <h3 className="text-white font-semibold mb-5 tracking-wide">
+        CONTACT
+      </h3>
+
+      <ul className="space-y-3">
+        <li>AidConnect Platform</li>
+        <li>Chennai, India</li>
+        <li>support@aidconnect.org</li>
+        <li>+91 98765 43210</li>
+      </ul>
+    </div>
+
+  </div>
+
+  {/* Bottom bar */}
+  <div className="border-t border-zinc-800 mt-12 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+
+    <p>© 2026 AidConnect. All rights reserved.</p>
+
+    <div className="flex gap-6 mt-3 md:mt-0">
+      <span className="hover:text-green-400 cursor-pointer">Privacy Policy</span>
+      <span className="hover:text-green-400 cursor-pointer">Terms</span>
+    </div>
+
+  </div>
+
+</footer>
     </div>
   );
 }

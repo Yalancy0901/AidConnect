@@ -15,32 +15,33 @@ function Layout() {
     {
       label: "Raise Complaint",
       path: "/forms/raisecomplaint",
-      icon: <FaPlusCircle size={28} />,
+      icon: <FaPlusCircle size={40} />,
     },
     {
       label: "Track Complaint",
       path: "/forms/track",
-      icon: <FaSearch size={28} />,
+      icon: <FaSearch size={40} />,
     },
     {
       label: "Your Complaint",
       path: "/forms/yourcomplaint",
-      icon: <FaFileAlt size={28} />,
+      icon: <FaFileAlt size={40} />,
     },
     {
       label: "Help",
       path: "/forms/help",
-      icon: <FaQuestionCircle size={28} />,
+      icon: <FaQuestionCircle size={40} />,
     },
     {
       label: "Suggestion",
       path: "/forms/suggestion",
-      icon: <FaLightbulb size={28} />,
+      icon: <FaLightbulb size={40} />,
     },
   ];
 
   return (
     <div className="min-h-screen min-w-screen bg-black text-white">
+      
       {/* Header */}
       <nav className="px-8 py-6 border-b border-zinc-800">
         <h1
@@ -52,18 +53,20 @@ function Layout() {
       </nav>
 
       <div className="flex">
-        {/* Left Side Icons */}
+
+        {/* Left Icons */}
         <div className="w-1/2 flex items-center justify-center">
-          <div className="grid grid-cols-3 gap-12">
+          <div className="flex flex-wrap justify-center gap-24 max-w-2xl">
             {items.map((item, index) => (
               <div
                 key={index}
                 onClick={() => navigate(item.path)}
                 className="flex flex-col items-center gap-3 cursor-pointer group"
               >
-                <div className="w-20 h-20 rounded-full bg-zinc-800 flex items-center justify-center text-green-400 group-hover:bg-green-400 group-hover:text-black transition duration-300">
+                <div className="w-28 h-28 rounded-full bg-zinc-800 flex items-center justify-center text-green-400 group-hover:bg-green-400 group-hover:text-black transition duration-300">
                   {item.icon}
                 </div>
+
                 <p className="text-sm text-gray-300 group-hover:text-green-400 transition">
                   {item.label}
                 </p>
@@ -72,15 +75,16 @@ function Layout() {
           </div>
         </div>
 
-        {/* Right Side Dynamic Form */}
+        {/* Right Dynamic Form */}
         <div className="w-1/2 flex items-center justify-center px-12">
           <div className="w-full max-w-xl">
             <Outlet />
           </div>
         </div>
+
       </div>
     </div>
   );
 }
 
-export default Layout;
+export default Layout;  

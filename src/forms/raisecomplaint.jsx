@@ -53,8 +53,10 @@ function RaiseComplaint() {
   }
 };
 
-  return (
-    <div className="w-full max-w-xl bg-zinc-900 p-8 rounded-2xl border border-green-400">
+    return (
+  <div className="min-h-screen flex items-center justify-center bg-black px-4">
+
+    <div className="w-full max-w-3xl bg-zinc-900 p-10 rounded-2xl border border-green-400">
       <h2 className="text-xl font-semibold mb-6 border-b pb-2 text-white">
         Raise Complaint
       </h2>
@@ -85,13 +87,21 @@ function RaiseComplaint() {
           className="w-full bg-black border border-zinc-700 text-white rounded-full px-4 py-2"
         />
 
-        <input
+        <select
           name="category"
           value={form.category}
           onChange={handleChange}
-          placeholder="Category"
           className="w-full bg-black border border-zinc-700 text-white rounded-full px-4 py-2"
-        />
+        >
+          <option value="">Select Category</option>
+          <option value="Water and Sanitation">Water and Sanitation</option>
+          <option value="Healthcare and Medical Support">Healthcare and Medical Support</option>
+          <option value="Education">Education</option>
+          <option value="Infrastructure and Public Utilities">Infrastructure and Public Utilities</option>
+          <option value="Livelihood and Financial Support">Livelihood and Financial Support</option>
+          <option value="Emergency / Disaster Relief">Emergency / Disaster Relief</option>
+          <option value="Others">Others</option>
+        </select>
 
         <input
           name="location"
@@ -115,9 +125,12 @@ function RaiseComplaint() {
         >
           Submit
         </button>
+
       </form>
     </div>
-  );
+
+  </div>
+);
 }
 
 export default RaiseComplaint;

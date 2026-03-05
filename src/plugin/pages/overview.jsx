@@ -1,20 +1,73 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Analytics() {
-  const stats = [
-    { label: "Total Complaints", value: 128 },
-    { label: "Resolved", value: 76 },
-    { label: "In Progress", value: 34 },
-    { label: "Pending", value: 18 }
-  ];
+  const [stats, setStats] = useState([
+  { label: "Total Complaints", value: 0 },
+  { label: "Resolved", value: 0 },
+  { label: "In Progress", value: 0 },
+  { label: "Pending", value: 0 }
+]);
 
-  const demandData = [
-    { category: "Water", count: 42 },
-    { category: "Electricity", count: 31 },
-    { category: "Roads", count: 27 },
-    { category: "Healthcare", count: 18 },
-    { category: "Education", count: 10 }
-  ];
+const [demandData, setDemandData] = useState([
+  { category: "Water and Sanitation", count: 0 },
+  { category: "Healthcare and Medical Support", count: 0 },
+  { category: "Education", count: 0 },
+  { category: "Infrastructure and Public Utilities", count: 0 },
+  { category: "Livelihood and Financial Support", count: 0 },
+  { category: "Others", count: 0 }
+]);
+
+useEffect(() => {
+  const fetchAnalytics = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/requests");
+
+      const complaints = res.data;
+
+      const total = complaints.length;
+      const resolved = complaints.filter(c => c.status === "resolved").length;
+      const inProgress = complaints.filter(c => c.status === "inProgress").length;
+      const pending = complaints.filter(c => c.status === "unassigned").length;
+
+      setStats([
+        { label: "Total Complaints", value: total },
+        { label: "Resolved", value: resolved },
+        { label: "In Progress", value: inProgress },
+        { label: "Pending", value: pending }
+      ]);
+
+      const categories = {
+        "Water and Sanitation": 0,
+        "Healthcare and Medical Support": 0,
+        "Education": 0,
+        "Infrastructure and Public Utilities": 0,
+        "Livelihood and Financial Support": 0,
+        "Others": 0
+      };
+
+      complaints.forEach(c => {
+        if (categories[c.category] !== undefined) {
+          categories[c.category]++;
+        } else {
+          categories["Others"]++;
+        }
+      });
+
+      const formatted = Object.keys(categories).map(key => ({
+        category: key,
+        count: categories[key]
+      }));
+
+      setDemandData(formatted);
+
+    } catch (error) {
+      console.error("Analytics fetch error:", error);
+    }
+  };
+
+  fetchAnalytics();
+}, []);
 
   return (
     <div className="p-8">
@@ -57,7 +110,7 @@ export default function Analytics() {
                 <div className="w-full bg-black rounded-full h-2">
                   <div
                     className="bg-green-400 h-2 rounded-full"
-                    style={{ width: `${item.count * 2}%` }}
+                    style={{ width: `${(item.count / stats[0].value) * 100}%` }}
                   />
                 </div>
               </div>
