@@ -16,7 +16,7 @@ const complaintSchema = new mongoose.Schema(
     status: {
       type: String,
       enum:  ["unassigned", "todo", "inProgress", "blocked", "resolved"],
-      default: "Unassigned",
+      default: "unassigned",
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,

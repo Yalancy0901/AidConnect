@@ -5,30 +5,35 @@ const {
   createComplaint,
   getComplaints,
   getUserComplaints,
-  trackComplaint
+  trackComplaint,
+  deleteRequest
 } = require("../controllers/request.controller");
 
 const authMiddleware = require("../middleware/auth.middleware");
 const Complaint = require("../models/request.model");
 
 
-// Create complaint
+// CREATE COMPLAINT
 router.post("/", authMiddleware, createComplaint);
 
 
-// Get all complaints
+// GET ALL COMPLAINTS
 router.get("/", getComplaints);
 
 
-// Get logged-in user's complaints
+// GET USER COMPLAINTS
 router.get("/my", authMiddleware, getUserComplaints);
 
 
-// Track complaint
+// TRACK COMPLAINT
 router.get("/track/:id", trackComplaint);
 
 
-// Update complaint status (Kanban board)
+// DELETE COMPLAINT
+router.delete("/:id", deleteRequest);
+
+
+// UPDATE STATUS
 router.put("/:id/status", async (req, res) => {
   try {
 
@@ -43,9 +48,7 @@ router.put("/:id/status", async (req, res) => {
     ];
 
     if (!allowedStatus.includes(status)) {
-      return res.status(400).json({
-        message: "Invalid status"
-      });
+      return res.status(400).json({ message: "Invalid status" });
     }
 
     const updatedComplaint = await Complaint.findByIdAndUpdate(
@@ -55,20 +58,15 @@ router.put("/:id/status", async (req, res) => {
     );
 
     if (!updatedComplaint) {
-      return res.status(404).json({
-        message: "Complaint not found"
-      });
+      return res.status(404).json({ message: "Complaint not found" });
     }
 
     res.json(updatedComplaint);
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      message: "Failed to update status"
-    });
+    res.status(500).json({ message: "Failed to update status" });
   }
 });
-
 
 module.exports = router;

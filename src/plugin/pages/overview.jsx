@@ -1,79 +1,73 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import CountUp from "react-countup";
+
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Legend
+} from "recharts";
+
+const COLORS = ["#22c55e", "#4ade80", "#16a34a", "#15803d", "#86efac", "#bbf7d0"];
 
 export default function Analytics() {
-  const [stats, setStats] = useState([
-  { label: "Total Complaints", value: 0 },
-  { label: "Resolved", value: 0 },
-  { label: "In Progress", value: 0 },
-  { label: "Pending", value: 0 }
+
+  const [stats, setStats] = useState([]);
+  const [demandData, setDemandData] = useState([]);
+  const [recentComplaints, setRecentComplaints] = useState([]);
+  const [userStats, setUserStats] = useState({
+    totalUsers: 0,
+    newUsers: 0
+  });
+
+  useEffect(() => {
+
+    const fetchAnalytics = async () => {
+
+      try {
+
+        const res = await axios.get("http://localhost:5000/api/analytics/dashboard");
+
+        const data = res.data;
+
+        setStats([
+  { label: "Total Complaints", value: data.totalComplaints },
+  { label: "Resolved", value: data.resolved },
+  { label: "In Progress", value: data.inProgress },
+  { label: "To Do", value: data.todo }
 ]);
 
-const [demandData, setDemandData] = useState([
-  { category: "Water and Sanitation", count: 0 },
-  { category: "Healthcare and Medical Support", count: 0 },
-  { category: "Education", count: 0 },
-  { category: "Infrastructure and Public Utilities", count: 0 },
-  { category: "Livelihood and Financial Support", count: 0 },
-  { category: "Others", count: 0 }
-]);
+        setDemandData(data.demandData || []);
 
-useEffect(() => {
-  const fetchAnalytics = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/requests");
+        setRecentComplaints(data.recentComplaints || []);
 
-      const complaints = res.data;
+        setUserStats({
+          totalUsers: data.totalUsers || 0,
+          newUsers: data.newUsers || 0
+        });
 
-      const total = complaints.length;
-      const resolved = complaints.filter(c => c.status === "resolved").length;
-      const inProgress = complaints.filter(c => c.status === "inProgress").length;
-      const pending = complaints.filter(c => c.status === "unassigned").length;
+      } catch (error) {
+        console.error("Analytics fetch error:", error);
+      }
+    };
 
-      setStats([
-        { label: "Total Complaints", value: total },
-        { label: "Resolved", value: resolved },
-        { label: "In Progress", value: inProgress },
-        { label: "Pending", value: pending }
-      ]);
+    fetchAnalytics();
 
-      const categories = {
-        "Water and Sanitation": 0,
-        "Healthcare and Medical Support": 0,
-        "Education": 0,
-        "Infrastructure and Public Utilities": 0,
-        "Livelihood and Financial Support": 0,
-        "Others": 0
-      };
-
-      complaints.forEach(c => {
-        if (categories[c.category] !== undefined) {
-          categories[c.category]++;
-        } else {
-          categories["Others"]++;
-        }
-      });
-
-      const formatted = Object.keys(categories).map(key => ({
-        category: key,
-        count: categories[key]
-      }));
-
-      setDemandData(formatted);
-
-    } catch (error) {
-      console.error("Analytics fetch error:", error);
-    }
-  };
-
-  fetchAnalytics();
-}, []);
+  }, []);
 
   return (
     <div className="p-8">
+
       <h1 className="text-2xl font-bold mb-8">
-        Analytics
-        <span className="text-green-400"> Dashboard</span>
+        Analytics <span className="text-green-400">Dashboard</span>
       </h1>
 
       {/* Top Stats */}
@@ -81,57 +75,137 @@ useEffect(() => {
         {stats.map((item, index) => (
           <div
             key={index}
-            className="bg-zinc-900 p-6 rounded-xl border border-zinc-800"
+            className="bg-zinc-900 p-6 rounded-xl border border-zinc-800 hover:border-green-500 transition"
           >
             <p className="text-sm text-gray-400">{item.label}</p>
+
             <h2 className="text-3xl font-bold mt-2 text-green-400">
-              {item.value}
+              <CountUp end={item.value} duration={1.5} />
             </h2>
           </div>
         ))}
       </div>
 
-      {/* Demand vs Supply */}
+      {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Demand */}
+
+        {/* Pie Chart */}
         <div className="bg-zinc-900 p-6 rounded-xl border border-zinc-800">
           <h2 className="text-xl font-semibold mb-4">
             Demand by Category
           </h2>
 
-          <div className="space-y-4">
-            {demandData.map((item, index) => (
-              <div key={index}>
-                <div className="flex justify-between text-sm mb-1">
-                  <span>{item.category}</span>
-                  <span>{item.count}</span>
-                </div>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
 
-                <div className="w-full bg-black rounded-full h-2">
-                  <div
-                    className="bg-green-400 h-2 rounded-full"
-                    style={{ width: `${(item.count / stats[0].value) * 100}%` }}
-                  />
-                </div>
-              </div>
-            ))}
+                <Pie
+                  data={demandData}
+                  dataKey="count"
+                  nameKey="category"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={110}
+                  label
+                >
+                  {demandData.map((entry, index) => (
+                    <Cell key={index} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+
+                <Tooltip />
+                <Legend />
+
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Insights */}
+        {/* Recent Complaints */}
         <div className="bg-zinc-900 p-6 rounded-xl border border-zinc-800">
           <h2 className="text-xl font-semibold mb-4">
-            Key Insights
+            Recent Complaints
           </h2>
 
           <ul className="space-y-3 text-sm text-gray-300">
-            <li>• Water-related complaints are the highest in demand</li>
-            <li>• 59% complaints have been resolved successfully</li>
-            <li>• Electricity issues show longer resolution times</li>
-            <li>• Rural infrastructure needs urgent attention</li>
+            {recentComplaints.map((item, index) => (
+              <li key={index}>
+                {item.category} - {item.location} ({item.status})
+              </li>
+            ))}
           </ul>
         </div>
+
       </div>
+
+      {/* User Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+
+        <div className="bg-zinc-900 p-6 rounded-xl border border-zinc-800">
+
+          <h2 className="text-xl font-semibold mb-4">
+            User Statistics
+          </h2>
+
+          <div className="grid grid-cols-2 gap-6">
+
+            <div>
+              <p className="text-sm text-gray-400">Total Users</p>
+              <h3 className="text-2xl font-bold text-green-400">
+                {userStats.totalUsers}
+              </h3>
+            </div>
+
+            <div>
+              <p className="text-sm text-gray-400">New Users (7 days)</p>
+              <h3 className="text-2xl font-bold text-green-400">
+                {userStats.newUsers}
+              </h3>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* Status Chart */}
+      <div className="bg-zinc-900 p-6 rounded-xl border border-zinc-800 mt-10">
+
+        <h2 className="text-xl font-semibold mb-4">
+          Complaint Status Distribution
+        </h2>
+
+        <div className="h-80">
+
+          <ResponsiveContainer width="100%" height="100%">
+
+            <BarChart data={stats}>
+
+              <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+
+              <XAxis dataKey="label" stroke="#aaa" />
+
+              <YAxis stroke="#aaa" />
+
+              <Tooltip />
+
+              <Legend />
+
+              <Bar
+                dataKey="value"
+                fill="#22c55e"
+                radius={[6, 6, 0, 0]}
+              />
+
+            </BarChart>
+
+          </ResponsiveContainer>
+
+        </div>
+
+      </div>
+
     </div>
   );
 }

@@ -13,15 +13,14 @@ const columns = {
 export default function Tracker() {
 
   const [board, setBoard] = useState(columns);
-
-  const [showForm, setShowForm] = useState(false);
-  const [editingItem, setEditingItem] = useState(null);
   const [viewItem, setViewItem] = useState(null);
+
 
   // FETCH COMPLAINTS
   useEffect(() => {
 
     const fetchComplaints = async () => {
+
       try {
 
         const res = await axios.get("http://localhost:5000/api/requests");
@@ -37,21 +36,14 @@ export default function Tracker() {
 
         complaints.forEach((c) => {
 
-          const status = c.status ? c.status.toLowerCase() : "unassigned";
-
-          if (!updatedBoard[status]) {
-            updatedBoard["unassigned"].items.push(c);
-            return;
-          }
+          const status = c.status || "unassigned";
 
           updatedBoard[status].items.push({
             id: c._id,
             title: c.description,
             village: c.location,
             description: c.description,
-            deadline: new Date(c.createdAt)
-              .toISOString()
-              .split("T")[0],
+            deadline: new Date(c.createdAt).toISOString().split("T")[0],
           });
 
         });
@@ -61,36 +53,29 @@ export default function Tracker() {
       } catch (error) {
         console.error(error);
       }
+
     };
 
     fetchComplaints();
 
   }, []);
 
+
+
+  // DRAG DROP
   const handleDragEnd = async (result) => {
 
-  if (!result.destination) return;
+    if (!result.destination) return;
 
-  const { source, destination } = result;
+    const { source, destination } = result;
 
-  const sourceCol = board[source.droppableId];
-  const destCol = board[destination.droppableId];
+    const sourceCol = board[source.droppableId];
+    const destCol = board[destination.droppableId];
 
-  const sourceItems = Array.from(sourceCol.items);
-  const [moved] = sourceItems.splice(source.index, 1);
+    const sourceItems = Array.from(sourceCol.items);
+    const [moved] = sourceItems.splice(source.index, 1);
 
-  moved.status = destination.droppableId;
-
-  if (source.droppableId === destination.droppableId) {
-
-    sourceItems.splice(destination.index, 0, moved);
-
-    setBoard({
-      ...board,
-      [source.droppableId]: { ...sourceCol, items: sourceItems },
-    });
-
-  } else {
+    moved.status = destination.droppableId;
 
     const destItems = Array.from(destCol.items);
     destItems.splice(destination.index, 0, moved);
@@ -101,42 +86,63 @@ export default function Tracker() {
       [destination.droppableId]: { ...destCol, items: destItems },
     });
 
-  }
+    try {
 
-  // UPDATE DATABASE
-  try {
+      await axios.put(
+        `http://localhost:5000/api/requests/${moved.id}/status`,
+        { status: destination.droppableId }
+      );
 
-    await axios.put(
-      `http://localhost:5000/api/requests/${moved.id}/status`,
-      { status: destination.droppableId }
-    );
+    } catch (error) {
+      console.error("Status update failed", error);
+    }
 
-  } catch (error) {
+  };
 
-    console.error("Status update failed", error);
 
-  }
+  // DELETE
+  const handleDelete = async (id) => {
 
-};
+    try {
+
+      await axios.delete(`http://localhost:5000/api/requests/${id}`);
+
+      const newBoard = { ...board };
+
+      Object.keys(newBoard).forEach(col => {
+        newBoard[col].items = newBoard[col].items.filter(
+          item => item.id !== id
+        );
+      });
+
+      setBoard(newBoard);
+      setViewItem(null);
+
+    } catch (error) {
+      console.error("Delete failed", error);
+    }
+
+  };
+
 
   return (
+
     <div className="p-6 md:p-10 min-h-screen bg-black text-white">
 
-      {/* HEADER */}
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-green-400">
-          Complaint Tracker
-        </h1>
-      </div>
+      <h1 className="text-3xl font-bold text-green-400 mb-8">
+        Complaint Tracker
+      </h1>
 
-      {/* BOARD */}
       <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="flex gap-6 overflow-x-auto pb-4">
+
+        <div className="flex gap-6 overflow-x-auto">
 
           {Object.entries(board).map(([key, col]) => (
 
             <Droppable key={key} droppableId={key}>
+
               {(provided) => (
+
                 <div
                   ref={provided.innerRef}
                   {...provided.droppableProps}
@@ -154,6 +160,7 @@ export default function Tracker() {
                       draggableId={item.id}
                       index={index}
                     >
+
                       {(provided) => (
 
                         <div
@@ -161,28 +168,21 @@ export default function Tracker() {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
                           onClick={() => setViewItem(item)}
-                          className="bg-black rounded-lg p-4 mb-4 border border-zinc-800 cursor-pointer hover:border-green-400 transition"
+                          className="bg-black rounded-lg p-4 mb-4 border border-zinc-800 cursor-pointer"
                         >
 
-                          <h3 className="font-semibold text-sm truncate">
+                          <h3 className="font-semibold text-sm">
                             {item.title}
                           </h3>
 
-                          {item.village && (
-                            <p className="text-xs text-gray-400 mt-1 truncate">
-                              📍 {item.village}
-                            </p>
-                          )}
-
-                          {item.deadline && (
-                            <p className="text-xs text-gray-500 mt-1">
-                              ⏳ {item.deadline}
-                            </p>
-                          )}
+                          <p className="text-xs text-gray-400 mt-1">
+                            📍 {item.village}
+                          </p>
 
                         </div>
 
                       )}
+
                     </Draggable>
 
                   ))}
@@ -190,26 +190,25 @@ export default function Tracker() {
                   {provided.placeholder}
 
                 </div>
+
               )}
+
             </Droppable>
 
           ))}
 
         </div>
+
       </DragDropContext>
 
-      {/* VIEW MODAL */}
+
+
+      {/* MODAL */}
       {viewItem && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
 
-          <div className="bg-zinc-900 rounded-xl w-full max-w-lg p-6 relative">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center">
 
-            <button
-              onClick={() => setViewItem(null)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
-            >
-              ✕
-            </button>
+          <div className="bg-zinc-900 rounded-xl w-full max-w-lg p-6">
 
             <h2 className="text-2xl font-bold text-green-400 mb-2">
               {viewItem.title}
@@ -223,11 +222,28 @@ export default function Tracker() {
               {viewItem.description}
             </p>
 
+            <button
+              onClick={() => handleDelete(viewItem.id)}
+              className="mt-6 bg-red-600 hover:bg-red-700 px-4 py-2 rounded"
+            >
+              Delete Complaint
+            </button>
+
+            <button
+              onClick={() => setViewItem(null)}
+              className="mt-4 ml-4 bg-gray-600 px-4 py-2 rounded"
+            >
+              Close
+            </button>
+
           </div>
 
         </div>
+
       )}
 
     </div>
+
   );
+
 }
