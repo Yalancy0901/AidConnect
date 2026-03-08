@@ -47,10 +47,10 @@ function Home() {
       Dashboard
     </span>
     <span
-      onClick={() => navigate("/forms")}
+      onClick={() => navigate("/aboutus")}
       className="hover:text-green-400 cursor-pointer"
     >
-      Donate
+      About Us
     </span>
 
     {token ? (

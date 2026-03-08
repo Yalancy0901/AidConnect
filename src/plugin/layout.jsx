@@ -8,7 +8,7 @@ export default function Layout() {
       {/* SIDEBAR */}
       <aside className="w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col">
         <div className="px-6 py-5 text-xl font-bold text-green-400">
-          AidConnect CRM
+          AidConnect Analytical Dashboard
         </div>
 
         <nav className="flex-1 px-4 space-y-2 text-sm">
