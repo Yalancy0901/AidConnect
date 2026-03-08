@@ -1,32 +1,47 @@
 const Complaint = require("../models/request.model");
+const { v4: uuidv4 } = require("uuid");
 
+/* CREATE COMPLAINT */
 
-// CREATE COMPLAINT
 const createComplaint = async (req, res) => {
-
   try {
+    const {
+      fullName,
+      email,
+      mobile,
+      category,
+      location,
+      description
+    } = req.body;
 
     const complaint = new Complaint({
-      ...req.body,
+      fullName,
+      email,
+      mobile,
+      category,
+      location,
+      description,
+      trackingId: uuidv4(),
       user: req.user?.id
     });
 
     await complaint.save();
 
-    res.status(201).json(complaint);
+    res.status(201).json({
+      message: "Complaint submitted",
+      trackingId: complaint.trackingId
+    });
 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Failed to create complaint" });
+    res.status(500).json({ message: "Server error" });
   }
-
 };
 
 
+/* GET ALL COMPLAINTS */
 
-// GET ALL COMPLAINTS
 const getComplaints = async (req, res) => {
-
   try {
 
     const complaints = await Complaint.find().sort({ createdAt: -1 });
@@ -35,82 +50,83 @@ const getComplaints = async (req, res) => {
 
   } catch (error) {
 
-    console.error(error);
-    res.status(500).json({ message: "Failed to fetch complaints" });
+    res.status(500).json({ message: "Server error" });
 
   }
-
 };
 
 
+/* GET USER COMPLAINTS */
 
-// GET USER COMPLAINTS
 const getUserComplaints = async (req, res) => {
 
   try {
 
-    const complaints = await Complaint.find({ user: req.user.id });
+    const complaints = await Complaint.find({
+      user: req.user.id
+    });
 
     res.json(complaints);
 
   } catch (error) {
 
-    console.error(error);
-    res.status(500).json({ message: "Failed to fetch user complaints" });
+    res.status(500).json({ message: "Server error" });
 
   }
 
 };
 
 
+/* TRACK COMPLAINT */
 
-// TRACK COMPLAINT
 const trackComplaint = async (req, res) => {
 
   try {
 
-    const complaint = await Complaint.findById(req.params.id);
+    const complaint = await Complaint.findOne({
+      trackingId: req.params.id
+    });
 
     if (!complaint) {
-      return res.status(404).json({ message: "Complaint not found" });
+      return res.status(404).json({
+        message: "Complaint not found"
+      });
     }
 
     res.json(complaint);
 
   } catch (error) {
 
-    console.error(error);
-    res.status(500).json({ message: "Tracking failed" });
+    res.status(500).json({ message: "Server error" });
 
   }
 
 };
 
 
+/* DELETE */
 
-// DELETE COMPLAINT
 const deleteRequest = async (req, res) => {
 
   try {
 
-    const complaint = await Complaint.findByIdAndDelete(req.params.id);
+    const deleted = await Complaint.findByIdAndDelete(req.params.id);
 
-    if (!complaint) {
-      return res.status(404).json({ message: "Complaint not found" });
+    if (!deleted) {
+      return res.status(404).json({
+        message: "Complaint not found"
+      });
     }
 
-    res.json({ message: "Complaint deleted successfully" });
+    res.json({ message: "Complaint deleted" });
 
   } catch (error) {
 
-    console.error(error);
     res.status(500).json({ message: "Delete failed" });
 
   }
 
 };
-
-
 
 module.exports = {
   createComplaint,

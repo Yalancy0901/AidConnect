@@ -1,148 +1,241 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
 import {
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  CartesianGrid,
   PieChart,
   Pie,
   Cell,
+  Legend
 } from "recharts";
 
-/* ---------- MOCK DATA ---------- */
-
-const stats = [
-  { label: "Total Demand", value: "₹12.4M" },
-  { label: "Total Funded", value: "₹8.1M" },
-  { label: "Funding Gap", value: "₹4.3M" },
-  { label: "Active Partners", value: "18" },
-];
-
-const trendData = [
-  { month: "Jan", demand: 120, supply: 90 },
-  { month: "Feb", demand: 150, supply: 110 },
-  { month: "Mar", demand: 180, supply: 140 },
-  { month: "Apr", demand: 200, supply: 150 },
-  { month: "May", demand: 220, supply: 170 },
-];
-
-const fundingSplit = [
-  { name: "CSR Companies", value: 55 },
-  { name: "NGOs", value: 25 },
-  { name: "Government", value: 20 },
-];
-
-const unmetDemand = [
-  { name: "Water", value: 35 },
-  { name: "Healthcare", value: 30 },
-  { name: "Education", value: 20 },
-  { name: "Infrastructure", value: 15 },
-];
-
-const COLORS = ["#22c55e", "#3b82f6", "#f59e0b", "#ef4444"];
-
-/* ---------- COMPONENT ---------- */
+const COLORS = ["#22c55e","#3b82f6","#f59e0b","#ef4444","#a855f7","#14b8a6"];
 
 export default function Analytics() {
+
+  const [demandSupply, setDemandSupply] = useState([]);
+  const [complaintData, setComplaintData] = useState([]);
+  const [fundingData, setFundingData] = useState([]);
+
+  const [stats, setStats] = useState({
+    totalDemand: 0,
+    fundingTotal: 0
+  });
+
+  useEffect(() => {
+
+    fetchAnalytics();
+
+  }, []);
+
+  const fetchAnalytics = async () => {
+
+    try {
+
+      const res = await axios.get(
+        "http://localhost:5000/api/analytics/dashboard"
+      );
+
+      const demandSupplyData = res.data.demandSupplyData || [];
+
+      setDemandSupply(demandSupplyData);
+
+      const complaintChart = demandSupplyData.map(item => ({
+        name: item.category,
+        value: item.demand
+      }));
+
+      const fundingChart = demandSupplyData.map(item => ({
+        name: item.category,
+        value: item.supply
+      }));
+
+      setComplaintData(complaintChart);
+      setFundingData(fundingChart);
+
+      const totalDemand = demandSupplyData.reduce(
+        (sum, item) => sum + item.demand,
+        0
+      );
+
+      setStats({
+        totalDemand,
+        fundingTotal: res.data.fundingTotal
+      });
+
+    } catch (error) {
+
+      console.error("Analytics error", error);
+
+    }
+
+  };
+
+  const gap = stats.totalDemand - stats.fundingTotal;
+
   return (
-    <div className="p-6 md:p-10 bg-black min-h-screen text-white space-y-10">
-      {/* HEADER */}
+
+    <div className="p-8 bg-black min-h-screen text-white space-y-10">
+
       <h1 className="text-3xl font-bold text-green-400">
         Demand vs Supply Dashboard
       </h1>
 
-      {/* STATS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((s) => (
-          <div
-            key={s.label}
-            className="bg-zinc-900 rounded-xl p-6 border border-zinc-800"
-          >
-            <p className="text-sm text-gray-400">{s.label}</p>
-            <p className="text-2xl font-bold mt-2 text-green-400">
-              {s.value}
-            </p>
-          </div>
-        ))}
+      {/* TOP STATS */}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div className="bg-zinc-900 p-6 rounded-lg">
+          <p className="text-gray-400">Total Demand</p>
+          <p className="text-2xl text-red-400 font-bold">
+            ₹{stats.totalDemand.toLocaleString()}
+          </p>
+        </div>
+
+        <div className="bg-zinc-900 p-6 rounded-lg">
+          <p className="text-gray-400">Total Funding</p>
+          <p className="text-2xl text-green-400 font-bold">
+            ₹{stats.fundingTotal.toLocaleString()}
+          </p>
+        </div>
+
+        <div className="bg-zinc-900 p-6 rounded-lg">
+          <p className="text-gray-400">Funding Gap</p>
+          <p className="text-2xl text-yellow-400 font-bold">
+            ₹{gap.toLocaleString()}
+          </p>
+        </div>
+
       </div>
 
-      {/* CHARTS */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* LINE CHART */}
-        <div className="lg:col-span-2 bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-          <h2 className="font-semibold mb-4">
-            Demand vs Supply Trend
+      {/* BAR CHART */}
+
+      <div className="bg-zinc-900 p-6 rounded-lg">
+
+        <h2 className="text-lg font-semibold mb-4">
+          Demand vs Supply by Category
+        </h2>
+
+        <ResponsiveContainer width="100%" height={400}>
+
+          <BarChart data={demandSupply}>
+
+            <CartesianGrid strokeDasharray="3 3" stroke="#333"/>
+
+            <XAxis
+              dataKey="category"
+              stroke="#aaa"
+              angle={-20}
+              textAnchor="end"
+              height={80}
+            />
+
+            <YAxis stroke="#aaa"/>
+
+            <Tooltip/>
+
+            <Bar dataKey="demand" fill="#ef4444" name="Demand"/>
+
+            <Bar dataKey="supply" fill="#22c55e" name="Supply"/>
+
+          </BarChart>
+
+        </ResponsiveContainer>
+
+      </div>
+
+      {/* PIE CHARTS */}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+        {/* Complaint Distribution */}
+
+        <div className="bg-zinc-900 p-6 rounded-lg">
+
+          <h2 className="text-lg font-semibold mb-4">
+            Complaint Distribution
           </h2>
 
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={trendData}>
-              <XAxis dataKey="month" stroke="#aaa" />
-              <YAxis stroke="#aaa" />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="demand"
-                stroke="#ef4444"
-                strokeWidth={3}
-              />
-              <Line
-                type="monotone"
-                dataKey="supply"
-                stroke="#22c55e"
-                strokeWidth={3}
-              />
-            </LineChart>
+
+            <PieChart>
+
+              <Pie
+                data={complaintData}
+                dataKey="value"
+                nameKey="name"
+                outerRadius={100}
+              >
+
+                {complaintData.map((entry, index) => (
+
+                  <Cell
+                    key={index}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+
+                ))}
+
+              </Pie>
+
+              <Tooltip/>
+              <Legend/>
+
+            </PieChart>
+
           </ResponsiveContainer>
+
         </div>
 
-        {/* FUNDING SPLIT */}
-        <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-          <h2 className="font-semibold mb-4">
-            Funding Sources
+        {/* Funding Distribution */}
+
+        <div className="bg-zinc-900 p-6 rounded-lg">
+
+          <h2 className="text-lg font-semibold mb-4">
+            Funding Distribution
           </h2>
 
-          <ResponsiveContainer width="100%" height={260}>
+          <ResponsiveContainer width="100%" height={300}>
+
             <PieChart>
+
               <Pie
-                data={fundingSplit}
+                data={fundingData}
                 dataKey="value"
-                innerRadius={60}
-                outerRadius={90}
+                nameKey="name"
+                outerRadius={100}
               >
-                {fundingSplit.map((_, i) => (
-                  <Cell key={i} fill={COLORS[i]} />
+
+                {fundingData.map((entry, index) => (
+
+                  <Cell
+                    key={index}
+                    fill={COLORS[index % COLORS.length]}
+                  />
+
                 ))}
+
               </Pie>
-              <Tooltip />
+
+              <Tooltip/>
+              <Legend/>
+
             </PieChart>
+
           </ResponsiveContainer>
+
         </div>
 
-        {/* UNMET DEMAND */}
-        <div className="bg-zinc-900 rounded-xl p-6 border border-zinc-800">
-          <h2 className="font-semibold mb-4">
-            Unmet Demand Areas
-          </h2>
-
-          <ResponsiveContainer width="100%" height={260}>
-            <PieChart>
-              <Pie
-                data={unmetDemand}
-                dataKey="value"
-                innerRadius={60}
-                outerRadius={90}
-              >
-                {unmetDemand.map((_, i) => (
-                  <Cell key={i} fill={COLORS[i]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
       </div>
+
     </div>
+
   );
+
 }

@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/homepage";
 import Layout from "./forms/layout";
 import RaiseComplaint from "./forms/raisecomplaint";
@@ -12,7 +12,7 @@ import Profile from "./pages/profile";
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth" element={<LoginSignup />} />
@@ -29,7 +29,7 @@ function App() {
         <Route path="suggestion" element={<Suggestion />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
